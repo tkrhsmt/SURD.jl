@@ -3,7 +3,13 @@ uuid = "af3909fa-13be-4cc4-b82c-a37ee1bd47be"
 authors = ["Takeru Hashimoto"]
 version = "1.0.0-DEV"
 
+[deps]
+Combinatorics = "861a8166-3701-5b0c-9a16-15d98fcdc6aa"
+StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
+
 [compat]
+Combinatorics = "1.1.0"
+StatsBase = "0.34.9"
 julia = "1.10"
 
 [extras]
