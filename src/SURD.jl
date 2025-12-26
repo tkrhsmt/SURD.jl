@@ -8,11 +8,18 @@ export surd
 
 """
     surd(target::AbstractVector, agents::Tuple)
+
+Calculate the Synergistic, Unique, and Redundant Decomposition (SURD) of information provided by multiple agents about a target variable.
+
+# Arguments
+- `target`: A vector representing the target variable.
+- `agents`: A tuple of vectors representing the agent variables.
+- `log`: (optional) If true, prints the SURD results to the console.
 """
 function surd(
     target::AbstractVector,
     agents::Tuple;
-    log::Bool=true,
+    log::Bool=false,
 )
 
     # Get the dimension of the target vector
@@ -93,24 +100,42 @@ function surd(
 
     # Output results
     if log
-        println("=== SURD Results ===")
-        println("H_leak: ", H_leak_norm)
+        println("- SURD Results ------------------------------")
         for dim in 2:agents_dimension
             for num in 1:length(comb[dim])
-                println("I_s(", comb[dim][num], ") = ", I_s[dim-1][num] / I_total)
+                println("I_s(", comb[dim][num], ") \t$(round(I_s[dim-1][num] / I_total, digits=3))")
             end
         end
+        println("- - - - - - - - - - - -")
         for dim in 2:agents_dimension
             for num in 1:length(comb[dim])
-                println("I_r(", comb[dim][num], ") = ", I_r[dim-1][num] / I_total)
+                println("I_r(", comb[dim][num], ") \t$(round(I_r[dim-1][num] / I_total, digits=3))")
             end
         end
+        println("- - - - - - - - - - - -")
         for i in 1:agents_dimension
-            println("I_u(", i, ") = ", I_u[i] / I_total)
+            println("I_u(", i, ") \t\t$(round(I_u[i] / I_total, digits=3))")
+        end
+        println("- - - - - - - - - - - -")
+        println("H_leak: \t$(round(H_leak_norm, digits=3))")
+        println("----------------------------------------------")
+    end
+
+    I_u_dict = Dict()
+    I_r_dict = Dict()
+    I_s_dict = Dict()
+
+    for i in 1:agents_dimension
+        push!(I_u_dict, "$i" => I_u[i] / I_total)
+    end
+    for dim in 2:agents_dimension
+        for num in 1:length(comb[dim])
+            push!(I_s_dict, string(join(comb[dim][num], ",")) => I_s[dim-1][num] / I_total)
+            push!(I_r_dict, string(join(comb[dim][num], ",")) => I_r[dim-1][num] / I_total)
         end
     end
 
-    return (I_u ./ I_total, map(x -> x ./ I_total, I_s), map(x -> x ./ I_total, I_r), H_leak_norm)
+    return Dict("u" => I_u_dict, "s" => I_s_dict, "r" => I_r_dict, "leak" => H_leak_norm)
 end
 
 end
