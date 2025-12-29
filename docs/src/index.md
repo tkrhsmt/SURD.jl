@@ -68,7 +68,7 @@ ylims!(ax1,(0,1))
 
 ax2 = Axis(fig[1, 2], xticks=(1:1, ["leak"]), aspect=1/5, height=100, width=80)
 barplot!(ax2, [1], [result["leak"]], color = :gray)
-ylims!(ax2,(0,1)
+ylims!(ax2,(0,1))
 
 save("surd_decomposition.png", fig)
 ```
