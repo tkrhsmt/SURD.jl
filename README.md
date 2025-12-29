@@ -8,11 +8,10 @@ SURD.jl is a Julia package for exact computation with SURD (Synergistic-Unique-R
 
 ## Installation
 
-You can install SURD.jl using Julia's package manager. Open the Julia REPL and run the following commands:
+You can install SURD.jl using Julia's package manager. Open the Julia REPL and run the following commands (press `]` to enter the package manager):
 
 ```julia
-using Pkg
-Pkg.add("https://github.com/tkrhsmt/SURD.jl")
+add https://github.com/tkrhsmt/SURD.jl
 ```
 
 ## Usage

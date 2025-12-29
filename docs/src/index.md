@@ -9,12 +9,12 @@ SURD (Synergistic-Unique-Redundant Decomposition) is a Julia package for perform
 
 ## Installation
 
-You can install SURD.jl via Julia's package manager. Open the Julia REPL and run the following commands:
+You can install SURD.jl using Julia's package manager. Open the Julia REPL and run the following commands (press `]` to enter the package manager):
 
 ```julia
-using Pkg
-Pkg.add("https://github.com/tkrhsmt/SURD.jl")
+add https://github.com/tkrhsmt/SURD.jl
 ```
+
 
 ## Usage
 
