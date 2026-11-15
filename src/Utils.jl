@@ -1,9 +1,11 @@
 module Utils
 
 using Combinatorics
+using NearestNeighbors: inrangecount
 
 export prob_combination
 export shannon_entropy, particular_mutual_info
+export strict_neighborcount
 
 """
     prob_combination(n::Int)
@@ -105,6 +107,11 @@ function particular_mutual_info(p_target, p_agents, p_full, target_index, agent_
     end
 
     return I
+end
+
+function strict_neighborcount(tree, point, radius::AbstractFloat, self::Int)
+    radius <= 0 && return 0
+    return inrangecount(tree, point, prevfloat(radius), j -> j == self)
 end
 
 end

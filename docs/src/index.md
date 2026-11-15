@@ -42,9 +42,25 @@ end
 
 # Perform SURD decomposition
 # (Q1, Q2, Q3) -> Q2^+
-result = surd(Q2[2:end], (Q1[1:end-1], Q2[1:end-1], Q3[1:end-1]); log=true)
+result = surd(Q2[2:end], (Q1[1:end-1], Q2[1:end-1], Q3[1:end-1]), SURD.Histogram(); log=true)
 
 ```
+
+## Continuous data
+
+Pass a nearest-neighbor method for continuous observations. Each vector is a
+scalar series. Use a matrix with observations in columns for a vector-valued
+series.
+
+```julia
+continuous = surd(Q2[2:1001], (Q1[1:1000], Q2[1:1000]), SURD.kNN(; k=5))
+```
+
+Both methods return the component fractions under `"u"`, `"r"`, and `"s"`,
+and the leak under `"leak"`. The component fractions sum to one when the
+estimated total is positive. If the total is zero, all component fractions
+are zero. The kNN leak is `exp(-2 * I_total / d_Y)`, computed using the
+total before normalization in nats and the target dimension `d_Y`.
 
 ## Visualization
 
