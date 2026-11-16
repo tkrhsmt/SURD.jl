@@ -25,9 +25,9 @@ using Random, SURD
 
 # Example data
 rng = MersenneTwister(42)
-Q1 = zeros(1000000)
-Q2 = zeros(1000000)
-Q3 = zeros(1000000)
+Q1 = zeros(100000)
+Q2 = zeros(100000)
+Q3 = zeros(100000)
 
 # Initialize the time series with some random values
 Q1[1] = randn(rng)
@@ -35,7 +35,7 @@ Q2[1] = randn(rng)
 Q3[1] = randn(rng)
 
 # Generate synthetic time series data
-for i in 2:1000000
+for i in 2:100000
     Q1[i] = 0.3*Q1[i-1] + sin(Q2[i-1] * Q3[i-1]) + 0.001 * randn(rng)
     Q2[i] = 0.5 * Q2[i-1] + 0.1 * randn(rng)
     Q3[i] = Q2[i]
@@ -43,7 +43,7 @@ end
 
 # Perform SURD decomposition
 # (Q1, Q2, Q3) -> Q2^+
-result = surd(Q1[2:end], (Q1[1:end-1], Q2[1:end-1], Q3[1:end-1]), SURD.Histogram(); log=true)
+result = surd(Q1[2:end], (Q1[1:end-1], Q2[1:end-1], Q3[1:end-1]), SURD.kNN(); log=true)
 
 ```
 
@@ -51,7 +51,7 @@ result = surd(Q1[2:end], (Q1[1:end-1], Q2[1:end-1], Q3[1:end-1]), SURD.Histogram
 number of bins per variable, pass a positive integer to `SURD.Histogram`.
 
 ```julia
-result = surd(Q1[2:1001], (Q1[1:1000], Q2[1:1000]), SURD.Histogram(; nbins=16))
+result = surd(Q1[2:end], (Q1[1:end-1], Q2[1:end-1]), SURD.Histogram(; nbins=16))
 ```
 
 ## Continuous data
@@ -61,7 +61,7 @@ scalar series. Use a matrix with observations in columns for a vector-valued
 series.
 
 ```julia
-continuous = surd(Q1[2:1001], (Q1[1:1000], Q2[1:1000]), SURD.kNN(; k=5))
+continuous = surd(Q1[2:end], (Q1[1:end-1], Q2[1:end-1]), SURD.kNN(; k=5))
 ```
 
 Both methods return the component fractions under `"u"`, `"r"`, and `"s"`,
