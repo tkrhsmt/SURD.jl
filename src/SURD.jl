@@ -8,6 +8,9 @@ using NearestNeighbors: Chebyshev, KDTree, inrange!, knn, nn
 using SpecialFunctions: digamma
 
 export surd
+export surd_plot
+
+function surd_plot end
 
 abstract type method end
 
