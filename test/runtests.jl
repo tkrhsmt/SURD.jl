@@ -26,6 +26,20 @@ using Test
         @test independent["leak"] ≈ 1.0
         @test ismissing(surd(zeros(16), agents, SURD.Histogram())["leak"])
         @test_throws MethodError surd(x1, agents)
+
+        @testset "Explicit bin count" begin
+            one_bin = surd(x1, agents, SURD.Histogram(1))
+            @test all(iszero, values(one_bin["u"]))
+            @test ismissing(one_bin["leak"])
+
+            result = surd([0.0, 0.34, 1.0], ([0.0, 0.0, 1.0],), SURD.Histogram(; nbins=3))
+            @test result["leak"] ≈ (2 * log(2)) / (3 * log(3))
+
+            narrow = [1.0, nextfloat(1.0)]
+            @test surd(narrow, (narrow,), SURD.Histogram(4))["u"]["1"] ≈ 1.0
+            @test ismissing(surd(zeros(16), agents, SURD.Histogram(4))["leak"])
+            @test_throws ArgumentError SURD.Histogram(0)
+        end
     end
 
     @testset "kNN" begin

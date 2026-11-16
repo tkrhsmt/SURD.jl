@@ -46,6 +46,13 @@ result = surd(Q2[2:end], (Q1[1:end-1], Q2[1:end-1], Q3[1:end-1]), SURD.Histogram
 
 ```
 
+`SURD.Histogram()` uses StatsBase's automatic bin selection. To use a fixed
+number of bins per variable, pass a positive integer to `SURD.Histogram`.
+
+```julia
+result = surd(Q2[2:1001], (Q1[1:1000], Q2[1:1000]), SURD.Histogram(; nbins=16))
+```
+
 ## Continuous data
 
 Pass a nearest-neighbor method for continuous observations. Each vector is a

@@ -16,13 +16,48 @@ abstract type method end
 
 """
     SURD.Histogram()
+    SURD.Histogram(nbins)
+    SURD.Histogram(; nbins=nothing)
 
-Estimate the decomposition using a joint histogram.
+Estimate the decomposition using a joint histogram. By default, StatsBase
+chooses the bins automatically. Pass a positive integer `nbins` to use exactly
+that many bins along each dimension, including the target and every agent.
 """
-struct Histogram <: method end
+Base.@kwdef struct Histogram <: method
+    nbins::Union{Nothing,Int} = nothing
+
+    function Histogram(nbins::Union{Nothing,Integer})
+        isnothing(nbins) || nbins > 0 || throw(ArgumentError("nbins must be positive"))
+        return new(nbins)
+    end
+end
+
+function histogram_edges(series, nbins)
+    lo, hi = extrema(series)
+    isfinite(lo) && isfinite(hi) || throw(ArgumentError("histogram observations must be finite"))
+    if lo == hi
+        # Give a constant series a nonzero span.
+        lo, hi = min(lo, 0), max(hi, 1)
+    end
+    lower, upper = promote(float(lo), float(hi))
+    edges = collect(range(lower, upper; length=nbins + 1))
+    if all(i -> edges[i] < edges[i + 1], 1:nbins)
+        # Round outwards to include the data in the left-closed bins.
+        edges[1] = lower > lo ? prevfloat(lower) : lower
+        edges[end] = nextfloat(upper)
+        return edges
+    end
+
+    # Exact arithmetic keeps the edges distinct when floating-point edges coincide.
+    exact_lo, exact_hi = Rational{BigInt}.((lo, hi))
+    width = (exact_hi - exact_lo) / nbins
+    exact_edges = collect(range(exact_lo; step=width, length=nbins + 1))
+    exact_edges[end] += width / 2
+    return exact_edges
+end
 
 """
-    surd(target, agents, SURD.Histogram(); log=false)
+    surd(target, agents, SURD.Histogram(; nbins=nothing); log=false)
 
 Decompose the information provided by the tuple of scalar series `agents`
 about the scalar series `target`. Series must be aligned and have equal length.
@@ -48,7 +83,14 @@ function surd(
     agents_dimension = length(agents)
 
     # probability of full vector
-    p_full = fit(StatsBase.Histogram, (target, agents...))
+    data = (target, agents...)
+    nbins = method.nbins
+    p_full = if isnothing(nbins)
+        fit(StatsBase.Histogram, data)
+    else
+        edges = map(series -> histogram_edges(series, nbins), data)
+        fit(StatsBase.Histogram, data, edges)
+    end
     # probability of target only
     target_edges = p_full.edges[1]
     p_target = fit(StatsBase.Histogram, target, target_edges)
