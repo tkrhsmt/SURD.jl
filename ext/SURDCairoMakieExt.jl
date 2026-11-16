@@ -78,7 +78,7 @@ function surd_plot(result::Dict;
         ax2 = Axis(fig[1, 2],
             xticks=([1], [""]),
             limits=(nothing, (0, 1)),
-            title=L"\frac{\Delta I_\mathrm{leak}}{H(Q_j^+)}"
+            title="leak"
         )
 
         barplot!(ax2, [1], [result["leak"]], color=colorset[4], strokecolor=:black, strokewidth=1.0)
